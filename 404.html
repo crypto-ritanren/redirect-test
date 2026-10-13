@@ -1,23 +1,33 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ЧаДао — Чайная церемония и таймер</title>
+  <title>ЧаДао — Чайная церемония</title>
+  <meta name="description"
+    content="Интерактивный каталог и гид по завариванию китайского чая методом проливов (Гунфу Ча).">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@600;700&display=swap"
+    rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #12100E;
-      --card-bg: rgba(28, 25, 23, 0.85);
+      --bg-black: #000000;
+      --card-bg: #0C0D0F;
       --card-border: rgba(255, 255, 255, 0.08);
-      --jade-green: #3E7B5D;
-      --jade-light: #52A07B;
-      --terracotta: #C26343;
-      --text-main: #F5F2EB;
-      --text-muted: #9E9589;
-      --gold: #D4AF37;
+      --accent: #A6CE3C;
+      --accent-hover: #BBE059;
+      --accent-dark: #8FB82E;
+      --accent-glow: rgba(166, 206, 60, 0.15);
+      --accent-subtle: rgba(166, 206, 60, 0.08);
+      --accent-border: rgba(166, 206, 60, 0.22);
+      --text-primary: #F5F5F7;
+      --text-secondary: #8E8E93;
+      --text-tertiary: #5A5D64;
     }
 
     * {
@@ -27,93 +37,132 @@
     }
 
     body {
-      background-color: var(--bg-dark);
-      background-image: 
-        radial-gradient(circle at 50% 15%, rgba(62, 123, 93, 0.22) 0%, transparent 60%),
-        radial-gradient(circle at 80% 80%, rgba(194, 99, 67, 0.15) 0%, transparent 50%);
-      color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-black);
+      background-image:
+        radial-gradient(ellipse 70% 45% at 50% 0%, var(--accent-glow) 0%, transparent 70%);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding: 24px 20px;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .container {
       width: 100%;
-      max-width: 440px;
+      max-width: 400px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 28px;
       padding: 36px 28px;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.03);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       text-align: center;
-      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: fadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(18px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
-    .logo-badge {
-      width: 76px;
-      height: 76px;
+    .logo-box {
+      width: 64px;
+      height: 64px;
       margin: 0 auto 20px;
-      background: linear-gradient(135deg, rgba(62, 123, 93, 0.25), rgba(194, 99, 67, 0.25));
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 24px;
+      background: var(--accent-subtle);
+      border: 1px solid var(--accent-border);
+      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 38px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
-      position: relative;
+      color: var(--accent);
+      box-shadow: 0 8px 24px rgba(166, 206, 60, 0.12);
+      transition: transform 0.3s ease;
+    }
+
+    .logo-box:hover {
+      transform: scale(1.04);
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      display: block;
     }
 
     h1 {
       font-size: 26px;
       font-weight: 800;
       letter-spacing: -0.5px;
-      margin-bottom: 6px;
-      color: #FFF;
+      margin-bottom: 4px;
+      color: var(--text-primary);
     }
 
-    .chinese-title {
-      font-family: 'Noto Serif SC', serif;
-      color: var(--gold);
-      font-size: 15px;
+    .subtitle {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    .tea-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-subtle);
+      border: 1px solid var(--accent-border);
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-size: 12px;
       font-weight: 600;
-      letter-spacing: 2px;
-      margin-bottom: 18px;
-      opacity: 0.9;
+      color: var(--text-secondary);
+      margin-bottom: 22px;
+      word-break: break-all;
+    }
+
+    .tea-badge strong {
+      color: var(--accent);
+      font-weight: 700;
     }
 
     .status-box {
-      background: rgba(0, 0, 0, 0.25);
-      border-radius: 18px;
-      padding: 20px 16px;
-      margin-bottom: 24px;
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 18px;
+      padding: 18px 16px;
+      margin-bottom: 22px;
     }
 
     .status-text {
-      font-size: 15px;
-      color: var(--text-main);
-      margin-bottom: 10px;
-      line-height: 1.5;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.45;
     }
 
     .progress-bar-container {
       width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 4px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 100px;
       overflow: hidden;
       margin-top: 14px;
     }
@@ -121,53 +170,105 @@
     .progress-bar {
       height: 100%;
       width: 100%;
-      background: linear-gradient(90deg, var(--jade-green), var(--terracotta));
+      background: linear-gradient(90deg, var(--accent-dark), var(--accent));
       animation: progress 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
       transform-origin: left;
     }
 
     @keyframes progress {
-      0% { transform: scaleX(0); }
-      100% { transform: scaleX(1); }
+      0% {
+        transform: scaleX(0);
+      }
+
+      100% {
+        transform: scaleX(1);
+      }
     }
 
     .btn {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       width: 100%;
-      padding: 15px 20px;
+      padding: 14px 20px;
       border-radius: 16px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       text-decoration: none;
       transition: all 0.2s ease;
       cursor: pointer;
       border: none;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--terracotta), #D37453);
-      color: #FFF;
-      box-shadow: 0 8px 24px rgba(194, 99, 67, 0.35);
+      background: var(--accent);
+      color: #0C0D0F;
+      box-shadow: 0 4px 20px rgba(166, 206, 60, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(166, 206, 60, 0.35);
     }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text-main);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-weight: 600;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: var(--accent-border);
+      transform: translateY(-1px);
+    }
+
+    .footer-note {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      margin-top: 18px;
+      line-height: 1.5;
     }
   </style>
 </head>
+
 <body>
 
   <div class="container">
-    <div class="logo-badge">🍵</div>
+    <div class="logo-box">
+      <svg class="logo-icon" viewBox="0 0 1000 1000" fill="currentColor">
+        <path
+          d="M150.93,144.09c13.53-13.33,27.21-27.58,42.18-38.51,6.2-4.52,41.69-26.27,39.76-1.28-2.91,37.78-25.81,81.19-47.66,113.63-5.56,8.24-12.06,16.29-18.89,23.51,46.27-5.29,52.53,48.17,51.48,80.92-1.25,38.94-21.34,119.48-73.54,122.45-39.97,1.95-79.92,4.24-119.85,6.96-26.95,1.8-11.63-56.74-8.66-68.94,12.77-52.39,35.68-102.92,62.07-149.43,19.13-33.73,45.67-62,73.12-89.31ZM176.11,173.7c2.4-6.72,9.45-36.35-9.64-24.06-8.81,5.67-16.64,13.75-24.06,21.36-21.24,24.28-34.49,48.64-42.43,79.94,34.45-18.25,63.31-41.35,76.13-77.24ZM98.25,387.7c35.38,1.92,61.95-34.37,61.89-65.56-.04-21.96-9.62-38.31-34.96-31.77-16.13,4.16-31.94,12.54-46.24,21.25-12.97,28.06-26.41,73.6,19.31,76.09Z" />
+        <path
+          d="M377.98,15.95c21.69-5.47,41.72,6.52,50.48,26.45,12.21,27.75,14.23,59.84,16.52,89.69,4.76,61.82,8.27,124.45,6.89,186.68-.49,22.13,3.56,116.47-32.47,118.33-14.15.15-28.3.33-42.45.53-53.77,1.98,25.51-131.19-7.49-154.06-4.54-2.86-13.81-4.69-23.12-4-13.82,1.02-31.63,9.91-29.5,26.6,1.33,28.78,15.01,132.5-34.96,133.48-15.05.43-30.1.89-45.15,1.39-40.51,2.96,10.75-125.82,14.94-141.08,12.53-45.61,11.4-94.65,23.6-140.91,13.3-50.4,38.54-100.5,80.91-132.54,6.51-4.66,14.03-8.61,21.79-10.57ZM394.12,147.22c.77-16.71-3.24-53.75-28.89-48.49-14.78,3.03-24.5,15.58-33.08,27.53-23.28,38.9-23.58,77.98-20.82,122.01,50.07-16.29,80.44-49.78,82.8-101.05Z" />
+        <path
+          d="M776.74,370.12c.39,26.91-12.14,70.07-44.93,69.28-31.16-.75-62.83-14.6-94.3-15.63-31.03-1.02-61.88,13.45-93.15,13.73-15.97.14-33.23-6.06-45.85-15.85-32.74-28.18-25.72-86.86-21.87-124.76,4.58-45.03,16.75-90.8,16.59-135.36-.12-33.56-10.85-67.12-14.08-100.45-2-20.68,1.26-55.51,29.93-54.73,28.23.77,36.51,42.91,40,63.84,6.61,39.64,5.4,81.12-.36,120.79-3.93,26.46-8.23,52.94-9.42,79.7-.82,18.36-3.39,59.72,18.6,66.83,49.45,15.98,43.8-98.54,40.57-123.09-7.07-53.64-30.05-106.7-27.58-162.48.49-14.04,6.89-40.45,26.26-36.56,22.42,4.51,31.61,31.64,33.01,51.51,2.03,28.85,5.27,56.89,12.73,84.87,13.12,49.2,23.45,96.39,21.01,147.94.14,15.87,4.23,45.97,24.59,47.1,19.98,1.11,21.6-31.04,21.3-44.41-1.51-67.49-31.63-138.16-44.25-205.86-2.52-13.52-14.38-70.44,17.97-56.75,24.48,10.35,43.11,42.2,45.19,67.85,2.82,34.67,7.11,68.33,14.76,102.58,12.07,54.01,32.48,104.05,33.28,159.92Z" />
+        <path
+          d="M905.03,217.07c-1.6.41-4.42.01-8.55-2.2-3.55-1.89-7.61-4.61-12.39-8.64-18.97-16.5-36.84-38.59-55.57-51.79-18.48-13.03-12.26,15.42-9.83,21.88,9.87,26.26,35.63,46.49,61.8,56.85,15.72,6.22,26.42,22.09,32.53,36.84,4.68,11.29,4.4,30-13.07,24.93-2.39-.69-5.41-1.91-8.36-3.17-5.56-2.38-11.3-4.75-15.81-6.01-25.68-7.12-28.32,15.66-24.68,33.95,4.77,23.97,20.21,51.01,47.49,55.19,28.45,4.36,19.47-31.2,43.18-33.3,2.17-.43,4.67.1,6.65.64,20.71,5.66,36.35,31.35,40.3,51.83,7.98,41.33-44.53,58.4-76.38,59.34-.77-.04-1.92-.1-2.68-.14-65.29-3.26-105.26-55.58-116.22-116.11-5.32-29.37-14.99-100.53,28.42-109.1-27.81-22.9-49.52-53.39-61.33-87.03-8.4-23.92-21.77-85.05,23.21-52.78,40.76,29.24,85.48,70.38,114.36,111.87,7.05,10.13,8.66,15.54,6.93,16.94Z" />
+        <path
+          d="M121.16,549.38c36.41,1.77,63.16,31.75,77.63,61.54,11.16,22.98,13.91,51.3,17.92,77.05,5.8,37.24,11.27,74.88,19.81,111.14,8.53,36.21,22.49,71.28,34.47,106.89,1.26,3.74,15.93,46.73-3.54,33.3-8.89-4.52-13.27-6.89-21.9-11.83-55.28-32.59-74.81-118.53-73.12-177.54.82-28.48,1.89-93.45-36.4-100.93-.38-.06-1.15-.16-1.53-.22-39.34-6.46-18.73,65.77-14.28,80.33,9.51,31.14,23.34,61.95,36.91,91.99,7.93,17.56,27.41,43.94,26.92,63.47-2.26-.29-3.78-1.41-5.6-2.98-8.06-6.47-15.97-13.27-23.57-20.28-18.81-17.6-38.39-37.13-50.5-59.36-7.85-14.4-13.86-29.92-18.43-46.05-13.72-47.86-50.83-98.65-40.78-150.3,7.7-33.91,41.72-57.88,75.98-56.22Z" />
+        <path
+          d="M290.56,887.2c-48.41-77.35-62.55-176.23-22.08-260.79,19.51-39.97,60.61-70.27,105.91-69.49,114.75,1.96,142.36,153.21,141.67,239.98-.49,61.52-9.85,212.94-107.9,194.67-52.68-9.81-91.26-62.28-117.6-104.38ZM319.39,685.91c-21.83-1.55-35.09,21.7-37.84,40.27-3.69,24.99,2.93,58.34,22.26,76.09,8.39,7.56,15.05,10.99,20.82,11.75,10.68,1.4,18.67-7.43,27.92-7.21,2.56.06,5.42,2.4,8.34,7.41,8.87,15.9-9.36,37.56-16.72,50.37-14.78,25.71,12.69,65.43,38.7,70.47,4.18.81,8.01.34,11.24-1.81,16.24-12.1,12.82-37.99,10.82-55.48-1.6-13.96-10.21-38.47-1.7-51.1,1.85-2.22,3.78-2.91,5.07-2.57,10.38,2.76,20.82,25.33,28.43,35.12,7.31,9.26,13.99,13.26,19.43,13.34,29.12.43,31.48-65.77,4.6-73.04-12.02-3.25-43.92-3.23-44.48-21.01-.4-12.86,13.69-24.4,20.93-33.91,11.92-15.66,21.81-33.44,19.45-53.65-2.06-17.63-14.11-43.33-34.72-44.08-5.35-.19-11.24,1.71-17.38,6.12-20.8,15.63-17.63,45.04-15.11,67.73,1,9.02,8.69,46.07-8.56,43.14-9.75-1.65-12.93-16.47-16.3-24.99-6.42-16.24-13.5-32.76-26.75-44.74-5.92-5.45-12.09-7.8-18.46-8.25Z" />
+        <path
+          d="M577.02,558.17c20.68.34,35.87,18.83,57.12,18.13,15.5-.51,29.79-7.46,43.63-14.29,7.18-4.14,14.8-6.36,21.76-6.45,28.92-.39,46.4,29.69,43.79,56.28-2.68,27.28-12.05,59.93-44.22,62.65-5.48.46-11.43.25-17.3-1.23-18.41-4.66-37.21-10.5-56.24-10.27-17.55.22-29.07,13.91-29.48,30.99-1.39,57.42,10.54,119.25,10.69,178.67.07,27.91,2.73,114.03-39.6,118.3-9.61,1.05-14.46,1.47-24.23,2.07-26.62,2.22-17.63-49.18-15.97-62.67,5.05-41.26,15.39-82.37,14.89-124.14-.72-61.26-22.34-122.34-15.27-183.24,3.01-25.92,18.05-65.33,50.43-64.8Z" />
+        <path
+          d="M708.28,887.53c-18.58-84.84,19.8-189.28,62.2-263.88,23.51-36.98,58.66-71.92,105.06-74.13,30.84-1.47,60.07,14.18,75.78,40.81,23.59,39.98,11.62,88.92-6.01,127.4-23.37,50.98-61.02,95.6-100.44,136.78-22.52,23.52-46.25,48.75-73.39,65.44-11.44,7.03-26.2,15.56-40.16,9.29-15.58-6.99-19.84-27.13-23.03-41.71ZM809.22,672.4c-23.11,3.48-38.03,28.9-46.27,47.78-7.34,16.82-18.05,54.26-1.69,69.57,5.74,4.49,11.27,5.32,16.51,3.81,11-3.15,19.43-13.55,29.45-17.11,2.26-.8,4.25.34,5.18,3.92,1.6,18.22-26.88,42.45-35.85,54.62-6.37,8.65-22.05,28.82-15.86,41.94,3.89,8.24,10.97,10.33,19.34,6.04,3.53-1.81,7.43-4.33,11.54-8.12,16.3-15.23,27.71-34.3,35.9-54.9,5.58-14.04,8.22-31.99,18.51-43.51,2.4-2.56,3.93-3.51,5.29-3.97,5.1-1.72,5.22,9.04,10.81,18.83,2.36,4.7,6.11,5.1,10.31,3.02,9.44-4.69,52.12-60.16,30.28-58.64-4.93.34-34.66,10.08-29.84-4.13,10.27-30.26,48.81-45.36,54.49-80.04,2.18-13.34-5.33-31.81-20.64-30.2-4.35.46-9.62,2.92-15.52,7.51-18.62,14.32-22.56,38.74-26.09,60.38-2.13,13.01-5.04,38.29-18.6,39.65-6.93.69-6.94-11.63-7.84-18-1.83-12.92-4.15-25.02-13.92-34.46-4.32-3.81-9.68-4.86-15.51-3.98Z" />
+      </svg>
+    </div>
     <h1>ЧаДао</h1>
-    <div class="chinese-title">茶道 · GONGFU TEA TIMER</div>
+    <div class="subtitle">茶道 · ЧАЙНАЯ ЦЕРЕМОНИЯ</div>
+
+    <div id="teaBadge" class="tea-badge" style="display: none;">
+      Сорт: <strong id="teaIdLabel"></strong>
+    </div>
 
     <div class="status-box">
       <div id="statusMessage" class="status-text">
-        Перенаправляем...
+        Перенаправляем на страницу чая...
       </div>
       <div class="progress-bar-container" id="progressBar">
         <div class="progress-bar"></div>
@@ -175,47 +276,106 @@
     </div>
 
     <a id="targetBtn" href="#" class="btn btn-primary" style="display: none;">
-      Перейти на страницу ➔
+      <span>Перейти на страницу</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14M12 5l7 7-7 7" />
+      </svg>
     </a>
 
     <a id="appBtn" href="#" class="btn btn-secondary" style="display: none;">
-      Открыть в приложении ЧаДао
+      <span>Открыть в приложении ЧаДао</span>
     </a>
+
+    <p class="footer-note" id="footerNote">
+      Если переход не произошел автоматически, нажмите кнопку выше.
+    </p>
   </div>
 
   <script>
-    (function() {
+    (function () {
+      const fullUrl = window.location.href;
       const urlParams = new URLSearchParams(window.location.search);
-      const teaId = urlParams.get('id');
-      const targetUrl = urlParams.get('target');
+      let teaId = urlParams.get('id');
+      let targetUrl = urlParams.get('target');
 
+      // 1. Умное восстановление target, если в URL потерялся '?'
+      if (!targetUrl) {
+        const targetMatch = fullUrl.match(/[?&]target=([^&#]+)/i);
+        if (targetMatch) {
+          try {
+            targetUrl = decodeURIComponent(targetMatch[1]);
+          } catch (_) {
+            targetUrl = targetMatch[1];
+          }
+        }
+      }
+
+      // 2. Умное восстановление teaId
+      if (!teaId) {
+        const idMatch = fullUrl.match(/[?&]id=([a-zA-Z0-9_\-]+)/i);
+        if (idMatch) {
+          teaId = idMatch[1];
+        } else {
+          // Если ID был передан как часть пути, например: /tea/gaba_woodland&target=...
+          const pathMatch = window.location.pathname.match(/\/([a-zA-Z0-9_\-]+)(?:&|$)/);
+          if (pathMatch && !['redirect-test', 'web_redirect', 'tea'].includes(pathMatch[1])) {
+            teaId = pathMatch[1];
+          }
+        }
+      }
+
+      const teaBadge = document.getElementById('teaBadge');
+      const teaIdLabel = document.getElementById('teaIdLabel');
       const statusMessage = document.getElementById('statusMessage');
       const progressBar = document.getElementById('progressBar');
       const targetBtn = document.getElementById('targetBtn');
       const appBtn = document.getElementById('appBtn');
 
       if (teaId) {
-        const appSchemeUrl = 'chadao://tea?id=' + encodeURIComponent(teaId);
-        appBtn.href = appSchemeUrl;
-        appBtn.style.display = 'block';
+        teaBadge.style.display = 'inline-flex';
+        teaIdLabel.textContent = teaId;
 
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = appSchemeUrl;
-        document.body.appendChild(iframe);
+        // Надежный Android Intent для Chrome + кастомная схема для остальных
+        const androidIntentUrl = 'intent://tea?id=' + encodeURIComponent(teaId) + '#Intent;scheme=chadao;package=com.chadao.chadao;end';
+        const customSchemeUrl = 'chadao://tea?id=' + encodeURIComponent(teaId);
+
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        appBtn.href = isAndroid ? androidIntentUrl : customSchemeUrl;
+        appBtn.style.display = 'flex';
+
+        // Мягкая попытка открыть приложение на Android
+        if (isAndroid) {
+          setTimeout(function () {
+            if (targetUrl) {
+              window.location.href = targetUrl;
+            }
+          }, 1500);
+
+          // Пробуем вызвать кастомную схему
+          window.location.href = customSchemeUrl;
+        }
       }
 
       if (targetUrl) {
         targetBtn.href = targetUrl;
-        targetBtn.style.display = 'block';
-        setTimeout(function() {
-          window.location.replace(targetUrl);
+        targetBtn.style.display = 'flex';
+        statusMessage.textContent = 'Перенаправляем в магазин...';
+
+        // Редирект на маркетплейс / внешнюю ссылку
+        setTimeout(function () {
+          window.location.href = targetUrl;
         }, 1200);
       } else {
         progressBar.style.display = 'none';
-        statusMessage.textContent = 'Добро пожаловать в ЧаДао';
+        if (teaId) {
+          statusMessage.textContent = 'Сорт найден. Откройте в приложении ЧаДао или перейдите по ссылке.';
+        } else {
+          statusMessage.textContent = 'Добро пожаловать в ЧаДао — интерактивный каталог китайского чая.';
+        }
       }
     })();
   </script>
 </body>
+
 </html>
