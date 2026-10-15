@@ -233,6 +233,12 @@
       margin-top: 18px;
       line-height: 1.5;
     }
+
+    .domain-alert {
+      color: #E5A93C;
+      font-weight: 600;
+      word-break: break-all;
+    }
   </style>
 </head>
 
@@ -276,7 +282,7 @@
     </div>
 
     <a id="targetBtn" href="#" class="btn btn-primary" style="display: none;">
-      <span>Перейти на страницу</span>
+      <span id="targetBtnText">Перейти на страницу</span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
         stroke-linecap="round" stroke-linejoin="round">
         <path d="M5 12h14M12 5l7 7-7 7" />
@@ -297,16 +303,16 @@
       const fullUrl = window.location.href;
       const urlParams = new URLSearchParams(window.location.search);
       let teaId = urlParams.get('id');
-      let targetUrl = urlParams.get('target');
+      let rawTargetUrl = urlParams.get('target');
 
       // 1. Умное восстановление target, если в URL потерялся '?'
-      if (!targetUrl) {
+      if (!rawTargetUrl) {
         const targetMatch = fullUrl.match(/[?&]target=([^&#]+)/i);
         if (targetMatch) {
           try {
-            targetUrl = decodeURIComponent(targetMatch[1]);
+            rawTargetUrl = decodeURIComponent(targetMatch[1]);
           } catch (_) {
-            targetUrl = targetMatch[1];
+            rawTargetUrl = targetMatch[1];
           }
         }
       }
@@ -325,12 +331,67 @@
         }
       }
 
+      // 3. Белый список доверенных доменов для авто-редиректа (только официальный магазин)
+      const TRUSTED_DOMAINS = [
+        'chaekshop.ru'
+      ];
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      // 4. Безопасный парсинг и валидация URL (защита от XSS: javascript:, data:, vbscript:)
+      function parseSafeUrl(raw) {
+        if (!raw || typeof raw !== 'string') return null;
+        const trimmed = raw.trim();
+        // Строгий запрет псевдо-протоколов выполнения скриптов
+        if (/^\s*(javascript|data|vbscript|file):/i.test(trimmed)) {
+          return null;
+        }
+        try {
+          const parsed = new URL(trimmed, window.location.origin);
+          // Разрешаем только протоколы http и https
+          if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+            return null;
+          }
+          return parsed;
+        } catch (_) {
+          return null;
+        }
+      }
+
+      // 5. Проверка соответствия белому списку (защита от Open Redirect)
+      function isTrustedHost(hostname) {
+        if (!hostname) return false;
+        const host = hostname.toLowerCase();
+        const currentHost = (window.location.hostname || '').toLowerCase();
+
+        // Разрешаем локальное окружение и текущий хост
+        if (host === 'localhost' || host === '127.0.0.1') {
+          return true;
+        }
+        if (currentHost && (host === currentHost || host.endsWith('.' + currentHost))) {
+          return true;
+        }
+        return TRUSTED_DOMAINS.some(function (domain) {
+          return host === domain || host.endsWith('.' + domain);
+        });
+      }
+
+      const safeTargetUrl = parseSafeUrl(rawTargetUrl);
+      const isTrustedTarget = safeTargetUrl ? isTrustedHost(safeTargetUrl.hostname) : false;
+
       const teaBadge = document.getElementById('teaBadge');
       const teaIdLabel = document.getElementById('teaIdLabel');
       const statusMessage = document.getElementById('statusMessage');
       const progressBar = document.getElementById('progressBar');
       const targetBtn = document.getElementById('targetBtn');
+      const targetBtnText = document.getElementById('targetBtnText');
       const appBtn = document.getElementById('appBtn');
+      const footerNote = document.getElementById('footerNote');
 
       if (teaId) {
         teaBadge.style.display = 'inline-flex';
@@ -346,29 +407,48 @@
 
         // Мягкая попытка открыть приложение на Android
         if (isAndroid) {
-          setTimeout(function () {
-            if (targetUrl) {
-              window.location.href = targetUrl;
-            }
-          }, 1500);
-
+          if (safeTargetUrl && isTrustedTarget) {
+            setTimeout(function () {
+              window.location.href = safeTargetUrl.href;
+            }, 1500);
+          }
           // Пробуем вызвать кастомную схему
           window.location.href = customSchemeUrl;
         }
       }
 
-      if (targetUrl) {
-        targetBtn.href = targetUrl;
+      if (safeTargetUrl) {
+        targetBtn.href = safeTargetUrl.href;
+        targetBtn.rel = 'noopener noreferrer';
         targetBtn.style.display = 'flex';
-        statusMessage.textContent = 'Перенаправляем в магазин...';
 
-        // Редирект на маркетплейс / внешнюю ссылку
-        setTimeout(function () {
-          window.location.href = targetUrl;
-        }, 1200);
+        if (isTrustedTarget) {
+          // Доверенный домен (Wildberries, Ozon и др.) — безопасный авто-редирект
+          if (targetBtnText) targetBtnText.textContent = 'Перейти в магазин';
+          statusMessage.textContent = 'Перенаправляем в магазин...';
+
+          setTimeout(function () {
+            window.location.href = safeTargetUrl.href;
+          }, 1200);
+        } else {
+          // Внешний недоверенный домен (предотвращение Open Redirect)
+          // Авто-редирект отключен: требуем явного подтверждения пользователя
+          progressBar.style.display = 'none';
+          targetBtn.target = '_blank';
+          if (targetBtnText) targetBtnText.textContent = 'Перейти на ' + safeTargetUrl.hostname;
+          statusMessage.innerHTML = 'Внешняя ссылка на сторонний ресурс:<br><strong class="domain-alert">' + escapeHtml(safeTargetUrl.hostname) + '</strong>';
+          if (footerNote) {
+            footerNote.textContent = 'Переход по внешней ссылке выполняется по вашему решению.';
+          }
+        }
       } else {
         progressBar.style.display = 'none';
-        if (teaId) {
+        if (rawTargetUrl) {
+          // Ссылка была передана, но отфильтрована как небезопасная/некорректная
+          statusMessage.textContent = teaId
+            ? 'Сорт найден. Небезопасная ссылка для перехода заблокирована.'
+            : 'Некорректная или небезопасная ссылка для перехода.';
+        } else if (teaId) {
           statusMessage.textContent = 'Сорт найден. Откройте в приложении ЧаДао или перейдите по ссылке.';
         } else {
           statusMessage.textContent = 'Добро пожаловать в ЧаДао — интерактивный каталог китайского чая.';
